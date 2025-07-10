@@ -5,6 +5,8 @@ import Dashboard from "../pages/Dashboard";
 import Layout from "./Layout";
 import Transactions from "../pages/Transactions";
 import Members from "../pages/Members";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
 
 const PageRoutes = () => {
   return (
@@ -14,6 +16,9 @@ const PageRoutes = () => {
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/members" element={<Members />} />
       </Route>
+
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
     </Routes>
   );
 };
