@@ -5,10 +5,33 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
-  const handleRegister = (event) => {
+  const handleRegister = async (event) => {
     event.preventDefault();
     console.log(name, email, password, address);
+
+    try {
+      const response = await fetch("http://localhost:5003/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          password,
+          address,
+          phoneNumber,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      console.log(responseData);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -51,6 +74,18 @@ const Register = () => {
               className="border w-full p-2 rounded-lg"
               onChange={(event) => {
                 setEmail(event.target.value);
+              }}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="phone">Phone Number</label>
+            <input
+              id="phone"
+              value={phoneNumber}
+              placeholder="Enter your phone number."
+              className="border w-full p-2 rounded-lg"
+              onChange={(event) => {
+                setPhoneNumber(event.target.value);
               }}
             />
           </div>

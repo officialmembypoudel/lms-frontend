@@ -1,6 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    console.log(email, password);
+
+    try {
+      const response = await fetch("http://localhost:5003/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      console.log(responseData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="bg-gray-50 h-screen w-screen p-8 flex justify-center">
       <div>
@@ -23,22 +50,32 @@ const Login = () => {
           <div className="flex flex-col gap-2">
             <label htmlFor="email">Email</label>
             <input
+              value={email}
               id="email"
               placeholder="Enter your email."
               className="border w-full p-2 rounded-lg"
+              onChange={(event) => {
+                setEmail(event.target.value);
+              }}
             />
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="password">Password</label>
             <input
+              value={password}
               id="password"
               placeholder="Enter your password."
               className="border w-full p-2 rounded-lg"
+              onChange={(event) => {
+                setPassword(event.target.value);
+              }}
+              type="password"
             />
           </div>
           <button
             className="w-full bg-black text-white border p-2 rounded-lg
           hover:bg-gray-800 cursor-pointer"
+            onClick={handleSignIn}
           >
             Sign In
           </button>
