@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { Navigate } from "react-router";
+import { AuthContext } from "../context/AuthContext";
 
 const Register = () => {
+  const { user } = useContext(AuthContext);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,6 +36,10 @@ const Register = () => {
       console.log(error);
     }
   };
+
+  if (user) {
+    return <Navigate to={"/"} replace />;
+  }
 
   return (
     <div className="bg-gray-50 w-screen p-8 flex justify-center">

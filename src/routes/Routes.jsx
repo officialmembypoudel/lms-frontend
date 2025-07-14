@@ -7,14 +7,17 @@ import Transactions from "../pages/Transactions";
 import Members from "../pages/Members";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import ProtectedRoutes from "./ProtectedRoutes";
 
 const PageRoutes = () => {
   return (
     <Routes>
       <Route element={<Layout />} path="/">
-        <Route index element={<Dashboard />} />
-        <Route path="/transactions" element={<Transactions />} />
-        <Route path="/members" element={<Members />} />
+        <Route element={<ProtectedRoutes />}>
+          <Route index element={<Dashboard />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/members" element={<Members />} />
+        </Route>
       </Route>
 
       <Route path="/login" element={<Login />} />

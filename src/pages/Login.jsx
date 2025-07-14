@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { Navigate } from "react-router";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
+  const { user } = useContext(AuthContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -27,6 +31,10 @@ const Login = () => {
       console.log(error);
     }
   };
+
+  if (user) {
+    return <Navigate to={"/"} replace />;
+  }
 
   return (
     <div className="bg-gray-50 h-screen w-screen p-8 flex justify-center">
