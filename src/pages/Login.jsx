@@ -3,7 +3,7 @@ import { Navigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,6 +27,12 @@ const Login = () => {
       const responseData = await response.json();
 
       console.log(responseData);
+
+      if (responseData?.success) {
+        setUser(responseData.data);
+        const token = responseData.data.token;
+        localStorage.setItem("token", token);
+      }
     } catch (error) {
       console.log(error);
     }

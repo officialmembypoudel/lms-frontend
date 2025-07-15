@@ -8,6 +8,10 @@ const ProtectedRoutes = () => {
 
   console.log("information", information);
 
+  if (information.loading) {
+    return <div>loading...</div>;
+  }
+
   if (information?.user) {
     return <Outlet />;
   } else {
