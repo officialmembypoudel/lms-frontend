@@ -1,12 +1,15 @@
 import React from "react";
 import Card from "./common/Card";
 
-const DashboardCard = ({ title, count }) => {
+const DashboardCard = ({ title, count, Icon }) => {
   return (
-    <Card>
-      <div className="flex items-center justify-between gap-6">
-        <h3 className="text-3xl font-bold">{title}</h3>
-        <h3 className="text-4xl font-bold text-center">{count}</h3>
+    <Card customClass={"!p-3 !px-4"}>
+      <div className="flex items-center justify-between gap-32">
+        <div>
+          <p className="text-sm">{title}</p>
+          <h3 className="text-3xl font-bold">{count}</h3>
+        </div>
+        {Icon}
       </div>
     </Card>
   );
