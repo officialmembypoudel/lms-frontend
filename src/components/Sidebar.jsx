@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router";
+import { AuthContext } from "../context/AuthContext";
+import { FiLogOut } from "react-icons/fi";
 
 const Sidebar = () => {
+  const { user, setUser } = useContext(AuthContext);
+
   const activeStyle = ({ isActive }) => {
     return isActive
       ? {
@@ -11,37 +15,50 @@ const Sidebar = () => {
       : {};
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+  };
+
   return (
     <nav
       style={{ position: "fixed" }}
-      className=" w-[250px] h-[100vh] bg-gray-100 px-2"
+      className=" w-[250px] h-[100vh] bg-gray-100 px-2 flex flex-col justify-between"
     >
-      <h3 className="text-3xl font-bold mb-4 p-4">LMS</h3>
-      <div className="flex flex-col gap-2">
-        <NavLink
-          style={activeStyle}
-          className="p-4 text-lg rounded-lg hover:bg-[#8EA4D2] hover:text-white"
-          to="/"
-        >
-          Dashboard
-        </NavLink>
+      <div>
+        <h3 className="text-3xl font-bold mb-4 p-4">LMS</h3>
+        <div className="flex flex-col gap-2">
+          <NavLink
+            style={activeStyle}
+            className="p-4 text-lg rounded-lg hover:bg-[#8EA4D2] hover:text-white"
+            to="/"
+          >
+            Dashboard
+          </NavLink>
 
-        <NavLink
-          style={activeStyle}
-          className="p-4 text-lg rounded-lg hover:bg-[#8EA4D2] hover:text-white"
-          to="/transactions"
-        >
-          Transactions
-        </NavLink>
+          <NavLink
+            style={activeStyle}
+            className="p-4 text-lg rounded-lg hover:bg-[#8EA4D2] hover:text-white"
+            to="/transactions"
+          >
+            Transactions
+          </NavLink>
 
-        <NavLink
-          style={activeStyle}
-          className="p-4 text-lg hover:bg-[#8EA4D2] hover:text-white rounded-lg"
-          to="/members"
-        >
-          Members
-        </NavLink>
+          <NavLink
+            style={activeStyle}
+            className="p-4 text-lg hover:bg-[#8EA4D2] hover:text-white rounded-lg"
+            to="/members"
+          >
+            Members
+          </NavLink>
+        </div>
       </div>
+      <button
+        onClick={handleLogout}
+        className="mb-4 border border-red-400 text-red-400 p-2 rounded-lg font-semibold flex justify-center items-center gap-2 cursor-pointer hover:bg-red-50"
+      >
+        <FiLogOut /> Logout
+      </button>
     </nav>
   );
 };
