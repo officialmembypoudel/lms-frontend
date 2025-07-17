@@ -56,7 +56,7 @@ const Dashboard = () => {
       </div>
 
       <h2 className="mb-10 text-2xl font-semibold">Books ({books.length})</h2>
-      <div className="flex gap-6">
+      <div className="flex gap-4 justify-between">
         {books.map((book) => {
           return <BookCard key={book._id} book={book} />;
         })}
