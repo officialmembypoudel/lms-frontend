@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import { NavLink } from "react-router";
-import { AuthContext } from "../context/AuthContext";
 import { FiLogOut } from "react-icons/fi";
+import useAuth from "../hooks/useAuth";
 
 const Sidebar = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser } = useAuth();
 
   const activeStyle = ({ isActive }) => {
     return isActive

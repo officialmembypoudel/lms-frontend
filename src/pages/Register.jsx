@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate, Link } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 
 const Register = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,6 +33,10 @@ const Register = () => {
       const responseData = await response.json();
 
       console.log(responseData);
+
+      if (responseData.success) {
+        navigate("/login");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -129,7 +134,10 @@ const Register = () => {
           </button>
 
           <p className="text-center">
-            Already Have an Account? <span className="underline">Log in</span>
+            Already Have an Account?{" "}
+            <Link to={"/login"} className="underline">
+              Log in
+            </Link>
           </p>
         </form>
       </div>

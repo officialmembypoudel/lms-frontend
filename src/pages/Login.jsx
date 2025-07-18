@@ -1,10 +1,9 @@
-import React, { useContext, useState } from "react";
-import { Navigate } from "react-router";
-import { AuthContext } from "../context/AuthContext";
+import React, { useState } from "react";
+import { Link, Navigate } from "react-router";
+import useAuth from "../hooks/useAuth";
 
 const Login = () => {
-  const { user, setUser } = useContext(AuthContext);
-
+  const { user, setUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -93,6 +92,12 @@ const Login = () => {
           >
             Sign In
           </button>
+          <p className="text-center">
+            Don't Have an Account?{" "}
+            <Link to={"/register"} className="underline">
+              Register Now
+            </Link>
+          </p>
         </form>
       </div>
     </div>
