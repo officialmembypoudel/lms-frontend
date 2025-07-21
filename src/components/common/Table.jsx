@@ -32,7 +32,10 @@ const Table = ({ data = [], columns = [] }) => {
               >
                 {columns.map((col, colIndex) => {
                   return (
-                    <td key={colIndex} className="py-4 p-2 text-sm font-medium">
+                    <td
+                      key={colIndex}
+                      className={"py-4 p-2 text-sm font-medium" + col.class}
+                    >
                       {col.renderDetail
                         ? col.renderDetail(row)
                         : row[col.key] || "-"}

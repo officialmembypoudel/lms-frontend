@@ -6,8 +6,16 @@ const BookCard = ({ book }) => {
     <Card customClass="w-auto !px-3 !py-3 bg-white border border-gray-300 !rounded-xl shadow">
       <div className="flex items-center gap-6 mb-4">
         <h4 className="text-md min-w-[120px] font-bold">{book?.title}</h4>
-        <div className="border border-green-200 bg-green-100 px-4 text-center rounded-3xl">
-          <p className="text-xs font-bold text-black">{"Available"}</p>
+        <div
+          className={`border ${
+            book?.availability
+              ? "border-green-200 bg-green-100"
+              : "border-red-200 bg-red-100"
+          } px-4 py-1 text-center rounded-3xl`}
+        >
+          <p className="text-xs font-bold text-black">
+            {book?.availability ? "Available" : "Borrowed"}
+          </p>
         </div>
       </div>
       <p className="mb-2 text-sm font-medium">{book?.author}</p>

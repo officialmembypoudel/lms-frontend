@@ -32,7 +32,7 @@ const Dashboard = () => {
   return (
     <div className="px-4">
       <h1 className="pt-20 pb-4 text-3xl font-bold">Welcome, User</h1>
-      <div className="flex justify-between mb-4">
+      <div className="flex justify-between mb-8">
         <DashboardCard
           title="Books"
           count={30}
@@ -55,7 +55,7 @@ const Dashboard = () => {
         />
       </div>
 
-      <h2 className="mb-10 text-2xl font-semibold">Books ({books.length})</h2>
+      <h2 className="mb-4 text-2xl font-semibold">Books ({books.length})</h2>
       <div className="flex gap-4 justify-between">
         {books.map((book) => {
           return <BookCard key={book._id} book={book} />;

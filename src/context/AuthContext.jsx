@@ -11,13 +11,11 @@ const AuthProvider = ({ children }) => {
       const token = localStorage.getItem("token");
 
       const response = await fetch("http://localhost:5003/api/auth/profile", {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          token,
-        }),
       });
 
       const responseData = await response.json();
