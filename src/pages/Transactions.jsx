@@ -2,78 +2,71 @@ import React, { useEffect, useState } from "react";
 import Table from "../components/common/Table";
 import Card from "../components/common/Card";
 
-const columns = [
-  {
-    label: "Book",
-    key: "book",
-    renderDetail: (row) => {
-      return row?.book?.title;
+const getTransactionsColumn = ({ returnBook }) => {
+  return [
+    {
+      label: "Book",
+      key: "book",
+      renderDetail: (row) => {
+        return row?.book?.title;
+      },
     },
-  },
-  {
-    label: "Issued To",
-    key: "issuedTo",
-    renderDetail: (row) => {
-      return row?.issuedTo?.name;
+    {
+      label: "Issued To",
+      key: "issuedTo",
+      renderDetail: (row) => {
+        return row?.issuedTo?.name;
+      },
     },
-  },
-  {
-    label: "Issued By",
-    key: "issuedBy",
-    renderDetail: (row) => {
-      return row?.issuedBy?.name;
+    {
+      label: "Issued By",
+      key: "issuedBy",
+      renderDetail: (row) => {
+        return row?.issuedBy?.name;
+      },
     },
-  },
-  {
-    label: "Returned",
-    key: "returned",
+    {
+      label: "Returned To",
+      key: "returnedTo",
+      renderDetail: (row) => {
+        return row?.returnedTo?.name || "-";
+      },
+    },
+    {
+      label: "Returned",
+      key: "returned",
 
-    renderDetail: (row) => {
-      const returnBook = async () => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await fetch(
-            `http://localhost:5003/api/transactions/${row._id}/return`,
-            {
-              method: "PATCH",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          const responseData = await response.json();
-
-          if (responseData.success) {
-            console.log(responseData);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      };
-
-      return Boolean(row.returned) ? (
-        "Yes"
-      ) : (
-        <button
-          className="px-3 py-2 bg-green-300 hover:bg-green-300/90 rounded-lg cursor-pointer"
-          onClick={returnBook}
-        >
-          Return
-        </button>
-      );
+      renderDetail: (row) => {
+        return Boolean(row.returned) ? (
+          "Yes"
+        ) : (
+          <button
+            className="px-3 py-2 bg-green-300 hover:bg-green-300/90 rounded-lg cursor-pointer"
+            onClick={() => returnBook(row?._id)}
+          >
+            Return
+          </button>
+        );
+      },
     },
-  },
-  {
-    label: "Issue Date",
-    key: "issueDate",
-    renderDetail: (row) => {
-      const date = row.issueDate;
-      return new Date(date).toDateString();
+    {
+      label: "Issue Date",
+      key: "issueDate",
+      renderDetail: (row) => {
+        const date = row.issueDate;
+        return new Date(date).toDateString();
+      },
     },
-  },
-];
+    {
+      label: "Return Date",
+      key: "returnDate",
+      renderDetail: (row) => {
+        const date = row.issueDate;
+        return new Date(date).toDateString();
+      },
+    },
+  ];
+};
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
@@ -100,6 +93,42 @@ const Transactions = () => {
       console.error(error);
     }
   };
+
+  const returnBook = async (transactionId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:5003/api/transactions/${transactionId}/return`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (responseData.success) {
+        console.log(responseData);
+
+        const updatedTransactions = transactions.map((transaction) => {
+          if (transaction?._id === responseData?.data?._id) {
+            return responseData.data;
+          }
+
+          return transaction;
+        });
+
+        setTransactions(updatedTransactions);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const columns = getTransactionsColumn({ returnBook });
 
   useEffect(() => {
     fetchTransactions();
