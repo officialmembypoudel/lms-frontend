@@ -1,9 +1,12 @@
 import React from "react";
 import Card from "./common/Card";
 
-const BookCard = ({ book }) => {
+const BookCard = ({ book, handleBookClick }) => {
   return (
-    <Card customClass="w-auto !px-3 !py-3 bg-white border border-gray-300 !rounded-xl shadow">
+    <Card
+      onClick={handleBookClick}
+      customClass="w-auto !px-3 !py-3 bg-white border border-gray-300 !rounded-xl shadow"
+    >
       <div className="flex items-center gap-6 mb-4">
         <h4 className="text-md min-w-[120px] font-bold">{book?.title}</h4>
         <div

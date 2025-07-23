@@ -1,6 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 
+@theme {
+  /* Defines a bounce-short animation that repeats 5 times in 1 second
+     original bounce animation with an ease-in-out timing function. */
+  --animate-bounce-short: bounce 0.5s ease-in-out 0.3;
+}
+
 .class-padding {
   padding: 20px;
 }

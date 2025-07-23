@@ -6,12 +6,15 @@ import { FiUsers } from "react-icons/fi";
 import { FiTrendingUp } from "react-icons/fi";
 import { FiClock } from "react-icons/fi";
 import Loader from "../components/common/Loader";
+import Modal from "../components/common/modal";
 
 const Dashboard = () => {
   const [books, setBooks] = useState([]);
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [booksLoading, setBooksLoading] = useState(true);
+  const [showBookModal, setShowBookModal] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
 
   const fetchBooks = async () => {
     try {
@@ -58,6 +61,11 @@ const Dashboard = () => {
     getDashboardData();
   }, []);
 
+  // const handleBookClick = (book) => {
+  //   setShowBookModal(true);
+  //   setSelectedBook(book);
+  // };
+
   return (
     <div className="px-4">
       <h1 className="pt-20 pb-4 text-3xl font-bold">Welcome, User</h1>
@@ -98,10 +106,51 @@ const Dashboard = () => {
       ) : (
         <div className="flex gap-4 justify-between">
           {books.map((book) => {
-            return <BookCard key={book._id} book={book} />;
+            return (
+              <BookCard
+                key={book._id}
+                book={book}
+                handleBookClick={() => {
+                  setShowBookModal(true);
+                  setSelectedBook(book);
+                }}
+              />
+            );
           })}
         </div>
       )}
+
+      <Modal
+        open={showBookModal}
+        onClose={() => {
+          setShowBookModal(false);
+          setSelectedBook(null);
+        }}
+        title="Issue Book"
+      >
+        <div className="p-2 bg-green-100 border border-green-300 rounded-lg">
+          <h5 className="font-semibold">{selectedBook?.title}</h5>
+        </div>
+        <div className="mt-8 space-y-4">
+          <h5 className="font-semibold">Fill the issuance details</h5>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="email">Issue To</label>
+            <select
+              // value={"user-2"}
+              className="w-1/2 p-2 rounded-lg border"
+            >
+              <option value={"user-1"}>User 1</option>
+              <option value={"user-2"}>User 2</option>
+              <option value={"user-3"}>User 3</option>
+            </select>
+          </div>
+          <div className="flex justify-end mt-8">
+            <button className="bg-green-500 p-2 px-4 rounded-lg text-white hover:bg-green-400 cursor-pointer">
+              Issue Book
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
