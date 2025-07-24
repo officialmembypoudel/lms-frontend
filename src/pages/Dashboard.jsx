@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import BookCard from "../components/BookCard";
 import DashboardCard from "../components/DashboardCard";
 import { FiBook } from "react-icons/fi";
@@ -7,14 +7,20 @@ import { FiTrendingUp } from "react-icons/fi";
 import { FiClock } from "react-icons/fi";
 import Loader from "../components/common/Loader";
 import Modal from "../components/common/modal";
+import { MembersContext } from "../context/MembersContext";
 
 const Dashboard = () => {
+  const { members } = useContext(MembersContext);
   const [books, setBooks] = useState([]);
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [booksLoading, setBooksLoading] = useState(true);
   const [showBookModal, setShowBookModal] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [issuanceData, setIssuanceData] = useState({
+    issuedTo: "",
+    estimatedReturnDate: "",
+  });
 
   const fetchBooks = async () => {
     try {
@@ -61,10 +67,40 @@ const Dashboard = () => {
     getDashboardData();
   }, []);
 
-  // const handleBookClick = (book) => {
-  //   setShowBookModal(true);
-  //   setSelectedBook(book);
-  // };
+  const handleIssueBook = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:5003/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          bookId: selectedBook?._id,
+          issuedTo: issuanceData.issuedTo,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (responseData.success) {
+        const updatedBooks = books.map((book) => {
+          if (selectedBook?._id === book._id) {
+            return { ...book, availability: false };
+          }
+
+          return book;
+        });
+
+        setBooks(updatedBooks);
+        setSelectedBook(null);
+        setShowBookModal(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="px-4">
@@ -107,14 +143,16 @@ const Dashboard = () => {
         <div className="flex gap-4 justify-between">
           {books.map((book) => {
             return (
-              <BookCard
-                key={book._id}
-                book={book}
-                handleBookClick={() => {
-                  setShowBookModal(true);
-                  setSelectedBook(book);
-                }}
-              />
+              <MembersContext>
+                <BookCard
+                  key={book._id}
+                  book={book}
+                  handleBookClick={() => {
+                    setShowBookModal(true);
+                    setSelectedBook(book);
+                  }}
+                />
+              </MembersContext>
             );
           })}
         </div>
@@ -125,6 +163,7 @@ const Dashboard = () => {
         onClose={() => {
           setShowBookModal(false);
           setSelectedBook(null);
+          setIssuanceData({});
         }}
         title="Issue Book"
       >
@@ -136,16 +175,35 @@ const Dashboard = () => {
           <div className="flex flex-col gap-2">
             <label htmlFor="email">Issue To</label>
             <select
-              // value={"user-2"}
+              value={issuanceData.issuedTo}
+              onChange={(e) => {
+                setIssuanceData({
+                  ...issuanceData,
+                  issuedTo: e.target.value,
+                });
+              }}
               className="w-1/2 p-2 rounded-lg border"
             >
-              <option value={"user-1"}>User 1</option>
-              <option value={"user-2"}>User 2</option>
-              <option value={"user-3"}>User 3</option>
+              <option value="">Select Member</option>
+              {members?.map((member) => {
+                return (
+                  <option key={member?._id} value={member?._id}>
+                    {member?.name}
+                  </option>
+                );
+              })}
             </select>
           </div>
           <div className="flex justify-end mt-8">
-            <button className="bg-green-500 p-2 px-4 rounded-lg text-white hover:bg-green-400 cursor-pointer">
+            <button
+              onClick={handleIssueBook}
+              disabled={!issuanceData.issuedTo}
+              className={`${
+                issuanceData.issuedTo
+                  ? "bg-green-500 text-white hover:bg-green-400"
+                  : "bg-gray-200 text-gray-400"
+              } p-2 px-4 rounded-lg cursor-pointer`}
+            >
               Issue Book
             </button>
           </div>

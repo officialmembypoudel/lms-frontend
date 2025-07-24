@@ -61,8 +61,8 @@ const getTransactionsColumn = ({ returnBook }) => {
       label: "Return Date",
       key: "returnDate",
       renderDetail: (row) => {
-        const date = row.issueDate;
-        return new Date(date).toDateString();
+        const date = row.returnDate;
+        return date ? new Date(date).toDateString() : "-";
       },
     },
   ];
