@@ -48,6 +48,7 @@ const MembersProvider = ({ children }) => {
     <MembersContext.Provider
       value={{
         members,
+        setMembers,
       }}
     >
       {children}
