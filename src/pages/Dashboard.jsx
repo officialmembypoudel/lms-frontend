@@ -8,6 +8,7 @@ import { FiClock } from "react-icons/fi";
 import Loader from "../components/common/Loader";
 import Modal from "../components/common/modal";
 import { MembersContext } from "../context/MembersContext";
+import EditBookModal from "../components/EditBookModal";
 
 const Dashboard = () => {
   const { members } = useContext(MembersContext);
@@ -21,6 +22,9 @@ const Dashboard = () => {
     issuedTo: "",
     estimatedReturnDate: "",
   });
+
+  const [showEditBookModal, setShowEditBookModal] = useState(false);
+  const [toBeEditedBook, setToBeEditedBook] = useState(null);
 
   const fetchBooks = async () => {
     try {
@@ -102,6 +106,49 @@ const Dashboard = () => {
     }
   };
 
+  const handleEditBookClick = (book) => {
+    setToBeEditedBook(book);
+    setShowEditBookModal(true);
+  };
+
+  const handleEditBookSubmit = async (bookInfo) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:5003/api/books/${bookInfo?._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(bookInfo),
+        }
+      );
+
+      const responseData = await response.json();
+
+      console.log("response", responseData);
+
+      if (responseData.success) {
+        setShowEditBookModal(false);
+        setToBeEditedBook(null);
+        const updatedBooks = books.map((book) => {
+          if (book?._id === responseData?.data?._id) {
+            return responseData?.data;
+          }
+
+          return book;
+        });
+
+        setBooks(updatedBooks);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="px-4">
       <h1 className="pt-20 pb-4 text-3xl font-bold">Welcome, User</h1>
@@ -151,6 +198,7 @@ const Dashboard = () => {
                     setShowBookModal(true);
                     setSelectedBook(book);
                   }}
+                  handleEditBookClick={handleEditBookClick}
                 />
               </MembersContext>
             );
@@ -158,6 +206,7 @@ const Dashboard = () => {
         </div>
       )}
 
+      {/* Task: make an Issue book component */}
       <Modal
         open={showBookModal}
         onClose={() => {
@@ -170,6 +219,7 @@ const Dashboard = () => {
         <div className="p-2 bg-green-100 border border-green-300 rounded-lg">
           <h5 className="font-semibold">{selectedBook?.title}</h5>
         </div>
+
         <div className="mt-8 space-y-4">
           <h5 className="font-semibold">Fill the issuance details</h5>
           <div className="flex flex-col gap-2">
@@ -209,6 +259,16 @@ const Dashboard = () => {
           </div>
         </div>
       </Modal>
+
+      <EditBookModal
+        toBeEditedBook={toBeEditedBook}
+        open={showEditBookModal}
+        onClose={() => {
+          setShowEditBookModal(false);
+          setToBeEditedBook(null);
+        }}
+        onSubmit={handleEditBookSubmit}
+      />
     </div>
   );
 };

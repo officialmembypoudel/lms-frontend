@@ -1,7 +1,8 @@
 import React from "react";
 import Card from "./common/Card";
+import { FiEdit2 } from "react-icons/fi";
 
-const BookCard = ({ book, handleBookClick }) => {
+const BookCard = ({ book, handleBookClick, handleEditBookClick }) => {
   return (
     <Card
       onClick={handleBookClick}
@@ -33,6 +34,16 @@ const BookCard = ({ book, handleBookClick }) => {
         <p className="text-xs m-0">
           {new Date(book?.publicationDate).getFullYear()}
         </p>
+
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            handleEditBookClick(book);
+          }}
+          className="hover:bg-green-100 p-1 rounded-lg text-green-500"
+        >
+          <FiEdit2 size={14} />
+        </div>
       </div>
     </Card>
   );
