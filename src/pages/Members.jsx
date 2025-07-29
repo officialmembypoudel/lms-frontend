@@ -3,6 +3,7 @@ import Table from "../components/common/Table";
 import Card from "../components/common/Card";
 import { MembersContext } from "../context/MembersContext";
 import useAuth from "../hooks/useAuth";
+import { FiAlertTriangle } from "react-icons/fi";
 
 const getMemberColumns = ({ updateRole, user }) => {
   return [
@@ -100,6 +101,15 @@ const Members = () => {
       }),
     [user]
   );
+
+  if (user?.role === "Member") {
+    return (
+      <div className="h-screen bg-red-50 flex flex-col gap-8 items-center justify-center  text-red-600">
+        <FiAlertTriangle size={50} />
+        <h3 className="text-xl">You are not authorized to access this page!</h3>
+      </div>
+    );
+  }
 
   return (
     <>

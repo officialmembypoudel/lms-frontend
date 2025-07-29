@@ -44,12 +44,21 @@ const Sidebar = () => {
             Transactions
           </NavLink>
 
+          {user?.role !== "Member" && (
+            <NavLink
+              style={activeStyle}
+              className="p-4 text-lg hover:bg-[#8EA4D2] hover:text-white rounded-lg"
+              to="/members"
+            >
+              Members
+            </NavLink>
+          )}
           <NavLink
             style={activeStyle}
             className="p-4 text-lg hover:bg-[#8EA4D2] hover:text-white rounded-lg"
-            to="/members"
+            to="/profile"
           >
-            Members
+            Profile
           </NavLink>
         </div>
       </div>

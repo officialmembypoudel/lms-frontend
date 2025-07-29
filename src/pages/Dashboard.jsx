@@ -49,19 +49,21 @@ const Dashboard = () => {
   const getDashboardData = async () => {
     try {
       setLoading(true);
-
+      const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:5003/api/dashboard", {
         method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       const responseData = await response.json();
 
-      console.log(responseData);
-
       if (responseData.success) {
         setDashboardData(responseData.data);
-        setLoading(false);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -156,33 +158,38 @@ const Dashboard = () => {
       <h1 className="pt-20 pb-4 text-3xl font-bold">
         Welcome, {user?.name?.split(" ")[0]}
       </h1>
-      {loading ? (
-        <div className="py-6">
-          <Loader fullscreen={false} />
-        </div>
-      ) : (
-        <div className="flex justify-between mb-8">
-          <DashboardCard
-            title="Books"
-            count={dashboardData?.bookCount}
-            Icon={<FiBook size={38} color="blue" />}
-          />
-          <DashboardCard
-            title="Members"
-            count={dashboardData?.membersCount}
-            Icon={<FiUsers size={38} color="green" />}
-          />
-          <DashboardCard
-            title="Issued Books"
-            count={dashboardData?.issuedBooksCount}
-            Icon={<FiTrendingUp size={38} color="orange" />}
-          />
-          <DashboardCard
-            title={"Return Due"}
-            count={dashboardData?.returnDueCount}
-            Icon={<FiClock size={38} color="red" />}
-          />
-        </div>
+
+      {user?.role !== "Member" && (
+        <>
+          {loading ? (
+            <div className="py-6">
+              <Loader fullscreen={false} />
+            </div>
+          ) : (
+            <div className="flex justify-between mb-8">
+              <DashboardCard
+                title="Books"
+                count={dashboardData?.bookCount}
+                Icon={<FiBook size={38} color="blue" />}
+              />
+              <DashboardCard
+                title="Members"
+                count={dashboardData?.membersCount}
+                Icon={<FiUsers size={38} color="green" />}
+              />
+              <DashboardCard
+                title="Issued Books"
+                count={dashboardData?.issuedBooksCount}
+                Icon={<FiTrendingUp size={38} color="orange" />}
+              />
+              <DashboardCard
+                title={"Return Due"}
+                count={dashboardData?.returnDueCount}
+                Icon={<FiClock size={38} color="red" />}
+              />
+            </div>
+          )}
+        </>
       )}
 
       <h2 className="mb-4 text-2xl font-semibold">Books ({books.length})</h2>
