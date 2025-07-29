@@ -33,7 +33,9 @@ const MembersProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (user) {
+    if (user?.role == "Member") {
+      setMembers([]);
+    } else if (user) {
       fetchMembers();
     } else {
       setLoading(false);

@@ -9,8 +9,10 @@ import Loader from "../components/common/Loader";
 import Modal from "../components/common/modal";
 import { MembersContext } from "../context/MembersContext";
 import EditBookModal from "../components/EditBookModal";
+import useAuth from "../hooks/useAuth";
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const { members } = useContext(MembersContext);
   const [books, setBooks] = useState([]);
   const [dashboardData, setDashboardData] = useState(null);
@@ -151,7 +153,9 @@ const Dashboard = () => {
 
   return (
     <div className="px-4">
-      <h1 className="pt-20 pb-4 text-3xl font-bold">Welcome, User</h1>
+      <h1 className="pt-20 pb-4 text-3xl font-bold">
+        Welcome, {user?.name?.split(" ")[0]}
+      </h1>
       {loading ? (
         <div className="py-6">
           <Loader fullscreen={false} />

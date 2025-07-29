@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import Table from "../components/common/Table";
 import Card from "../components/common/Card";
 import { MembersContext } from "../context/MembersContext";
@@ -92,10 +92,14 @@ const Members = () => {
     }
   };
 
-  const columns = getMemberColumns({
-    updateRole: handleUpdateMemberRole,
-    user,
-  });
+  const columns = useMemo(
+    () =>
+      getMemberColumns({
+        updateRole: handleUpdateMemberRole,
+        user,
+      }),
+    [user]
+  );
 
   return (
     <>
