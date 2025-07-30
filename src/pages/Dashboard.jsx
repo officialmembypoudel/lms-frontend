@@ -8,8 +8,9 @@ import { FiClock } from "react-icons/fi";
 import Loader from "../components/common/Loader";
 import Modal from "../components/common/modal";
 import { MembersContext } from "../context/MembersContext";
-import EditBookModal from "../components/EditBookModal";
+import AddEditBookModal from "../components/AddEditBookModal";
 import useAuth from "../hooks/useAuth";
+import { makeApiRequest } from "../lib/api";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -28,46 +29,41 @@ const Dashboard = () => {
   const [showEditBookModal, setShowEditBookModal] = useState(false);
   const [toBeEditedBook, setToBeEditedBook] = useState(null);
 
+  const [showAddBookModal, setshowAddBookModal] = useState(false);
+  const [newBookInfo, setNewBookInfo] = useState(null);
+
   const fetchBooks = async () => {
-    try {
-      setBooksLoading(true);
-      const response = await fetch("http://localhost:5003/api/books", {
-        method: "GET",
-      });
+    setBooksLoading(true);
 
-      const responseData = await response.json();
-
-      console.log(responseData);
-
-      setBooks(responseData.data);
-      responseData.success && setBooksLoading(false);
-    } catch (error) {
+    const { response, error } = await makeApiRequest({
+      endpoint: "/books",
+    });
+    if (error) {
+      setLoading(false);
       console.log(error);
-      setBooksLoading(false);
+      return;
     }
+
+    setBooks(response.data);
+    response.success && setBooksLoading(false);
   };
+
   const getDashboardData = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5003/api/dashboard", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    setLoading(true);
+    const { response, error } = await makeApiRequest({
+      endpoint: "/dashboard",
+    });
 
-      const responseData = await response.json();
-
-      if (responseData.success) {
-        setDashboardData(responseData.data);
-      }
+    if (error) {
       setLoading(false);
-    } catch (error) {
       console.log(error);
-      setLoading(false);
+      return;
     }
+
+    if (response.success) {
+      setDashboardData(response.data);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -76,37 +72,31 @@ const Dashboard = () => {
   }, []);
 
   const handleIssueBook = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5003/api/transactions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          bookId: selectedBook?._id,
-          issuedTo: issuanceData.issuedTo,
-        }),
+    const { response, error } = await makeApiRequest({
+      endpoint: "/transactions",
+      method: "POST",
+      body: {
+        bookId: selectedBook?._id,
+        issuedTo: issuanceData.issuedTo,
+      },
+    });
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    if (response.success) {
+      const updatedBooks = books.map((book) => {
+        if (selectedBook?._id === book._id) {
+          return { ...book, availability: false };
+        }
+
+        return book;
       });
 
-      const responseData = await response.json();
-
-      if (responseData.success) {
-        const updatedBooks = books.map((book) => {
-          if (selectedBook?._id === book._id) {
-            return { ...book, availability: false };
-          }
-
-          return book;
-        });
-
-        setBooks(updatedBooks);
-        setSelectedBook(null);
-        setShowBookModal(false);
-      }
-    } catch (error) {
-      console.log(error);
+      setBooks(updatedBooks);
+      setSelectedBook(null);
+      setShowBookModal(false);
     }
   };
 
@@ -153,6 +143,29 @@ const Dashboard = () => {
     }
   };
 
+  const handleAddBookSubmit = async (bookInfo) => {
+    const { response, error } = await makeApiRequest({
+      endpoint: "/books",
+      method: "POST",
+      body: bookInfo,
+    });
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    console.log(response);
+
+    if (response.success) {
+      const newBook = response.data;
+
+      setBooks([newBook, ...books]);
+
+      setshowAddBookModal(false);
+      setNewBookInfo(null);
+    }
+  };
+
   return (
     <div className="px-4">
       <h1 className="pt-20 pb-4 text-3xl font-bold">
@@ -191,8 +204,15 @@ const Dashboard = () => {
           )}
         </>
       )}
-
-      <h2 className="mb-4 text-2xl font-semibold">Books ({books.length})</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className=" text-2xl font-semibold">Books ({books.length})</h2>
+        <button
+          onClick={() => setshowAddBookModal(true)}
+          className="bg-green-500 hover:bg-green-500/90 p-2 rounded-lg cursor-pointer text-white"
+        >
+          Add Book
+        </button>
+      </div>
       {booksLoading ? (
         <div className="py-6">
           <Loader fullscreen={false} />
@@ -271,7 +291,7 @@ const Dashboard = () => {
         </div>
       </Modal>
 
-      <EditBookModal
+      <AddEditBookModal
         toBeEditedBook={toBeEditedBook}
         open={showEditBookModal}
         onClose={() => {
@@ -279,6 +299,17 @@ const Dashboard = () => {
           setToBeEditedBook(null);
         }}
         onSubmit={handleEditBookSubmit}
+        modalTitle={"Edit Book"}
+      />
+      <AddEditBookModal
+        toBeEditedBook={newBookInfo}
+        open={showAddBookModal}
+        onClose={() => {
+          setNewBookInfo(null);
+          setshowAddBookModal(false);
+        }}
+        onSubmit={handleAddBookSubmit}
+        modalTitle={"Add Book"}
       />
     </div>
   );

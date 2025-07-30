@@ -1,8 +1,10 @@
 import React from "react";
 import Card from "./common/Card";
 import { FiEdit2 } from "react-icons/fi";
+import useAuth from "../hooks/useAuth";
 
 const BookCard = ({ book, handleBookClick, handleEditBookClick }) => {
+  const { user } = useAuth();
   return (
     <Card
       onClick={handleBookClick}
@@ -35,15 +37,17 @@ const BookCard = ({ book, handleBookClick, handleEditBookClick }) => {
           {new Date(book?.publicationDate).getFullYear()}
         </p>
 
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            handleEditBookClick(book);
-          }}
-          className="hover:bg-green-100 p-1 rounded-lg text-green-500"
-        >
-          <FiEdit2 size={14} />
-        </div>
+        {user?.role === "Admin" && (
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEditBookClick(book);
+            }}
+            className="hover:bg-green-100 p-1 rounded-lg text-green-500"
+          >
+            <FiEdit2 size={14} />
+          </div>
+        )}
       </div>
     </Card>
   );
