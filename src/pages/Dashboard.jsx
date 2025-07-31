@@ -11,8 +11,11 @@ import { MembersContext } from "../context/MembersContext";
 import AddEditBookModal from "../components/AddEditBookModal";
 import useAuth from "../hooks/useAuth";
 import { makeApiRequest } from "../lib/api";
+// import { toast } from "react-toastify";
+import { NotificationContext } from "../components/common/Notification";
 
 const Dashboard = () => {
+  const { toast } = useContext(NotificationContext);
   const { user } = useAuth();
   const { members } = useContext(MembersContext);
   const [books, setBooks] = useState([]);
@@ -70,6 +73,12 @@ const Dashboard = () => {
     fetchBooks();
     getDashboardData();
   }, []);
+
+  useEffect(() => {
+    if (books.length > 0) {
+      toast("Dashboard loaded successfully!!!!!");
+    }
+  }, [books]);
 
   const handleIssueBook = async () => {
     const { response, error } = await makeApiRequest({
@@ -218,20 +227,18 @@ const Dashboard = () => {
           <Loader fullscreen={false} />
         </div>
       ) : (
-        <div className="flex gap-4 justify-between">
+        <div className="flex gap-4  flex-wrap">
           {books.map((book) => {
             return (
-              <MembersContext>
-                <BookCard
-                  key={book._id}
-                  book={book}
-                  handleBookClick={() => {
-                    setShowBookModal(true);
-                    setSelectedBook(book);
-                  }}
-                  handleEditBookClick={handleEditBookClick}
-                />
-              </MembersContext>
+              <BookCard
+                key={book._id}
+                book={book}
+                handleBookClick={() => {
+                  setShowBookModal(true);
+                  setSelectedBook(book);
+                }}
+                handleEditBookClick={handleEditBookClick}
+              />
             );
           })}
         </div>

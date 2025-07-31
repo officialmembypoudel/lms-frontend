@@ -10,8 +10,8 @@ const Profile = () => {
 
   const [editMode, setEditMode] = useState(false);
   const [changePasswordMode, setChangePasswordMode] = useState(false);
-  const [editedUserInfo, setEditedUserInfo] = useState(null);
-  const [passwordInfo, setPasswordInfo] = useState(null);
+  const [editedUserInfo, setEditedUserInfo] = useState({});
+  const [passwordInfo, setPasswordInfo] = useState({});
 
   const handleUpdateUser = async () => {
     const { response, error } = await makeApiRequest({
@@ -61,8 +61,10 @@ const Profile = () => {
             <h6 className="text-lg font-semibold">User Details</h6>
             <button
               onClick={() => {
-                setEditMode(!editMode);
+                setEditMode(true);
                 setEditedUserInfo(user);
+                setChangePasswordMode(false);
+                setPasswordInfo({});
               }}
               className="hover:bg-green-100 rounded-lg p-2 text-green-600 cursor-pointer"
             >
@@ -91,6 +93,8 @@ const Profile = () => {
             <button
               onClick={() => {
                 setChangePasswordMode(true);
+                setEditMode(false);
+                setEditedUserInfo({});
               }}
               className="p-2 bg-red-400 hover:bg-red-400/90 rounded-lg text-white cursor-pointer"
             >

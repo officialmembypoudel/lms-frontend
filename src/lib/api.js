@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export const makeApiRequest = async ({ endpoint, method = "GET", body }) => {
   try {
     const token = localStorage.getItem("token");
@@ -12,9 +14,18 @@ export const makeApiRequest = async ({ endpoint, method = "GET", body }) => {
 
     const responseData = await response.json();
 
+    if (responseData.message) {
+      if (!responseData.success) {
+        toast.error(responseData.message);
+      } else {
+        toast.success(responseData.message);
+      }
+    }
+
     return { response: responseData };
   } catch (error) {
     console.log(error);
+    toast.error(error);
     return { error };
   }
 };

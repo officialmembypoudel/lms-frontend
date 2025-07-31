@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Table from "../components/common/Table";
 import Card from "../components/common/Card";
+import { makeApiRequest } from "../lib/api";
 
 const getTransactionsColumn = ({ returnBook }) => {
   return [
@@ -95,36 +96,25 @@ const Transactions = () => {
   };
 
   const returnBook = async (transactionId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:5003/api/transactions/${transactionId}/return`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+    const { error, response } = await makeApiRequest({
+      endpoint: `/transactions/${transactionId}/return`,
+      method: "PATCH",
+    });
+
+    if (error) {
+      return;
+    }
+
+    if (response.success) {
+      const updatedTransactions = transactions.map((transaction) => {
+        if (transaction?._id === response?.data?._id) {
+          return response.data;
         }
-      );
 
-      const responseData = await response.json();
+        return transaction;
+      });
 
-      if (responseData.success) {
-        console.log(responseData);
-
-        const updatedTransactions = transactions.map((transaction) => {
-          if (transaction?._id === responseData?.data?._id) {
-            return responseData.data;
-          }
-
-          return transaction;
-        });
-
-        setTransactions(updatedTransactions);
-      }
-    } catch (error) {
-      console.log(error);
+      setTransactions(updatedTransactions);
     }
   };
 
