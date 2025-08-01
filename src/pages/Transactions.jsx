@@ -9,7 +9,13 @@ const getTransactionsColumn = ({ returnBook }) => {
       label: "Book",
       key: "book",
       renderDetail: (row) => {
-        return row?.book?.title;
+        return (
+          row?.book?.title || (
+            <span className="font-semibold text-red-400">
+              Book has been removed
+            </span>
+          )
+        );
       },
     },
     {
@@ -74,13 +80,12 @@ const Transactions = () => {
 
   const fetchTransactions = async () => {
     try {
-      const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:5003/api/transactions", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
       });
 
       const responseData = await response.json();
@@ -126,12 +131,14 @@ const Transactions = () => {
 
   return (
     <>
-      <div className="p-4 px-8  mb-8 shadow">
+      <div className="p-4 px-8 pt-20 lg:pt-4 mb-8 shadow">
         <h4 className="text-3xl font-semibold">Transactions</h4>
       </div>
       <div className="px-8">
         <Card customClass="bg-white border border-gray-300">
-          <h5 className="text-2xl mb-4 font-bold">Transaction History</h5>
+          <h5 className="text-2xl w-full overflow-x-auto mb-4 font-bold">
+            Transaction History
+          </h5>
           <Table columns={columns} data={transactions} />
         </Card>
       </div>

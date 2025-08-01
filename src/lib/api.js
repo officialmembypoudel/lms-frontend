@@ -2,14 +2,13 @@ import { toast } from "react-toastify";
 
 export const makeApiRequest = async ({ endpoint, method = "GET", body }) => {
   try {
-    const token = localStorage.getItem("token");
     const response = await fetch(`http://localhost:5003/api${endpoint}`, {
       method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       body: body ? JSON.stringify(body) : undefined,
+      credentials: "include",
     });
 
     const responseData = await response.json();

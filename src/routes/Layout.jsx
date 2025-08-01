@@ -4,9 +4,9 @@ import { Outlet } from "react-router";
 
 const Layout = () => {
   return (
-    <div>
+    <div className="min-h-screen bg-white">
       <Sidebar />
-      <div className="ml-[250px]">
+      <div className="lg:ml-[250px] min-h-screen bg-gray-50">
         <Outlet />
       </div>
     </div>

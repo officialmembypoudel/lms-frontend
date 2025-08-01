@@ -71,14 +71,16 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchBooks();
-    getDashboardData();
-  }, []);
-
-  useEffect(() => {
-    if (books.length > 0) {
-      toast("Dashboard loaded successfully!!!!!");
+    if (user?.role !== "Member") {
+      getDashboardData();
     }
-  }, [books]);
+  }, [user]);
+
+  // useEffect(() => {
+  //   if (books.length > 0) {
+  //     toast("Dashboard loaded successfully!!!!!");
+  //   }
+  // }, [books]);
 
   const handleIssueBook = async () => {
     const { response, error } = await makeApiRequest({
@@ -106,12 +108,38 @@ const Dashboard = () => {
       setBooks(updatedBooks);
       setSelectedBook(null);
       setShowBookModal(false);
+      setDashboardData({
+        ...dashboardData,
+        issuedBooksCount: dashboardData.issuedBooksCount + 1,
+      });
     }
   };
 
   const handleEditBookClick = (book) => {
     setToBeEditedBook(book);
     setShowEditBookModal(true);
+  };
+  const handleDeleteBook = async ({ id, onSuccess }) => {
+    const { response, error } = await makeApiRequest({
+      endpoint: `/books/${id}`,
+      method: "DELETE",
+    });
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+    onSuccess();
+    if (response.success) {
+      const updatedBook = books.filter((book) => book?._id !== id);
+
+      setBooks(updatedBook);
+      setDashboardData({
+        ...dashboardData,
+        bookCount: dashboardData.bookCount - 1,
+      });
+    }
+    // remove book from books list too
   };
 
   const handleEditBookSubmit = async (bookInfo) => {
@@ -172,12 +200,16 @@ const Dashboard = () => {
 
       setshowAddBookModal(false);
       setNewBookInfo(null);
+      setDashboardData({
+        ...dashboardData,
+        bookCount: dashboardData.bookCount + 1,
+      });
     }
   };
 
   return (
-    <div className="px-4">
-      <h1 className="pt-20 pb-4 text-3xl font-bold">
+    <div className="px-4 py-6 min-h-screen bg-gray-50">
+      <h1 className="pt-16 pb-4 text-3xl font-bold text-gray-800">
         Welcome, {user?.name?.split(" ")[0]}
       </h1>
 
@@ -188,7 +220,7 @@ const Dashboard = () => {
               <Loader fullscreen={false} />
             </div>
           ) : (
-            <div className="flex justify-between mb-8">
+            <div className="flex justify-start lg:justify-between mb-8 flex-wrap gap-4">
               <DashboardCard
                 title="Books"
                 count={dashboardData?.bookCount}
@@ -215,12 +247,14 @@ const Dashboard = () => {
       )}
       <div className="flex justify-between items-center mb-4">
         <h2 className=" text-2xl font-semibold">Books ({books.length})</h2>
-        <button
-          onClick={() => setshowAddBookModal(true)}
-          className="bg-green-500 hover:bg-green-500/90 p-2 rounded-lg cursor-pointer text-white"
-        >
-          Add Book
-        </button>
+        {user?.role !== "Member" && (
+          <button
+            onClick={() => setshowAddBookModal(true)}
+            className="bg-green-500 hover:bg-green-500/90 p-2 rounded-lg cursor-pointer text-white"
+          >
+            Add Book
+          </button>
+        )}
       </div>
       {booksLoading ? (
         <div className="py-6">
@@ -238,6 +272,7 @@ const Dashboard = () => {
                   setSelectedBook(book);
                 }}
                 handleEditBookClick={handleEditBookClick}
+                handleDeleteBook={handleDeleteBook}
               />
             );
           })}

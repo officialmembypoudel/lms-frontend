@@ -52,10 +52,10 @@ const Profile = () => {
 
   return (
     <div>
-      <div className="p-4 px-8  mb-8 shadow">
+      <div className="p-4 px-8 pt-20 lg:pt-4  mb-8 shadow">
         <h4 className="text-3xl font-semibold">Profile</h4>
       </div>
-      <div className="px-4 grid grid-cols-2 gap-8">
+      <div className="px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card customClass="space-y-4 bg-white shadow">
           <div className="flex justify-between items-center border-b pb-1">
             <h6 className="text-lg font-semibold">User Details</h6>

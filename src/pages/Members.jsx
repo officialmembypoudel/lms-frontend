@@ -61,15 +61,14 @@ const Members = () => {
 
   const handleUpdateMemberRole = async (userId) => {
     try {
-      const token = localStorage.getItem("token");
       const response = await fetch(
         `http://localhost:5003/api/members/${userId}/change-role`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
+          credentials: "include",
         }
       );
 
@@ -113,7 +112,7 @@ const Members = () => {
 
   return (
     <>
-      <div className="p-4 px-8  mb-8 shadow">
+      <div className="p-4 px-8 pt-20 lg:pt-4 mb-8 shadow">
         <h4 className="text-3xl font-semibold">Members</h4>
       </div>
       <div className="px-8">

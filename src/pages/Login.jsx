@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, Navigate } from "react-router";
 import useAuth from "../hooks/useAuth";
+import { makeApiRequest } from "../lib/api";
 
 const Login = () => {
   const { user, setUser } = useAuth();
@@ -9,31 +10,22 @@ const Login = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    console.log(email, password);
 
-    try {
-      const response = await fetch("http://localhost:5003/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password,
-        }),
-      });
-
-      const responseData = await response.json();
-
-      console.log(responseData);
-
-      if (responseData?.success) {
-        setUser(responseData.data);
-        const token = responseData.data.token;
-        localStorage.setItem("token", token);
-      }
-    } catch (error) {
+    const { response, error } = await makeApiRequest({
+      endpoint: "/auth/login",
+      body: {
+        email,
+        password,
+      },
+      method: "POST",
+    });
+    if (error) {
       console.log(error);
+      return;
+    }
+
+    if (response?.success) {
+      setUser(response.data);
     }
   };
 

@@ -8,14 +8,12 @@ const AuthProvider = ({ children }) => {
 
   const getMyProfile = async () => {
     try {
-      const token = localStorage.getItem("token");
-
       const response = await fetch("http://localhost:5003/api/auth/profile", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
       });
 
       const responseData = await response.json();
